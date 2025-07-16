@@ -23,10 +23,11 @@ const messaging = getMessaging(app);
 
 // ✅ Register Service Worker
 navigator.serviceWorker
-  .register("firebase-messaging-sw.js")
+  .register("/NotificationWebTesting/firebase-messaging-sw.js")
   .then((registration) => {
-    console.log("✅ Service Worker registered!", registration);
-  })
+        getToken(messaging, { serviceWorkerRegistration: registration, vapidKey: 'BCSCbL1yqUuR0mKE6Oo1bNCnrxwvKKyM5fDALam6drZIG0KQBYD-5atku28OqE-Rvk-DReHtoTrttXFwxRziycY' })
+    })
+  
   .catch((err) => {
     console.error("❌ Service Worker registration failed:", err);
     alert("❌ Service Worker registration failed: " + err.message);

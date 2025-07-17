@@ -19,15 +19,21 @@ firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
-  console.log("[SW] Background message received:", payload);
-  
-  const { title, body, url } = payload.data;
+  console.log("[firebase-messaging-sw.js] Received background message:", payload);
+
+  const title = payload.data?.title || "New Notification";
+  const body = payload.data?.body || "You have a new message!";
+  const url = payload.data?.url || "/";
+  const icon = "/firebase-logo.png"; // Optional: use your own icon
+
   const notificationOptions = {
-    body: body,
-    icon: "/firebase-logo.png",
-    data: { url },
-    tag: "fcm-update",
-    renotify: false
+    body,
+    icon,
+    data: {
+      url,
+    },
+    tag: "fcm-broadcast-message",
+    renotify: true,
   };
 
   self.registration.showNotification(title, notificationOptions);

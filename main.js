@@ -104,8 +104,8 @@ document
   });
 
 onMessage(messaging, (payload) => {
-  console.log("✅ Foreground message:", payload);
-  const title = payload.data.title;
-  const body = payload.data.body;
-  alert(`🔔 ${title}\n${body}`); // Or custom toast/snackbar
+  const { title, body, url } = payload.data;
+  console.log("Foreground message:", title, body);
+  // Update UI, e.g. show custom toast (not a system notification)
 });
+

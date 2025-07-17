@@ -5,6 +5,7 @@ importScripts(
   "https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compat.js"
 );
 
+// ✅ Initialize Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyATWxiI8TKMWKJ_zHnJuUGC_bhDe10a40U",
   authDomain: "push-notification-f-57df8.firebaseapp.com",
@@ -13,45 +14,50 @@ const firebaseConfig = {
   messagingSenderId: "771076590862",
   appId: "1:771076590862:web:2a85f94fd7e6e96cd5db5f",
 };
+
 firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
 
+// ✅ Background Message Handler
 messaging.onBackgroundMessage((payload) => {
   console.log(
     "[firebase-messaging-sw.js] Received background message:",
     payload
   );
 
-  const notificationTitle = payload.notification.title;
+  const notificationTitle = payload.notification?.title || "New Message";
   const notificationOptions = {
-    body: payload.notification.body,
-    icon: "/firebase-logo.png",
+    body: payload.notification?.body || "",
+    icon: "/firebase-logo.png", // ✅ Customize if needed
     data: {
-      url: payload.data?.url || "/",
+      url: payload.data?.url || "/", // ✅ redirect URL
     },
-    tag: "fcm-broadcast-message", // Consistent tag for these notifications
-    renotify: true, // Ensures new notifications with the same tag trigger alerts
+    tag: "fcm-notification", // ✅ Unified tag
+    renotify: false, // Avoid repeat noise
   };
 
-  self.registration
-    .showNotification(notificationTitle, notificationOptions)
-    .then(() => {
-      console.log(
-        "[firebase-messaging-sw.js] Notification shown successfully."
-      );
-    })
-    .catch((error) => {
-      console.error(
-        "[firebase-messaging-sw.js] Error showing notification:",
-        error
-      );
-    });
+  // ✅ Show notification only in background
+  self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
+// ✅ Handle click on notification
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
-  const urlToOpen = event.notification.data?.url || "/";
-  event.waitUntil(clients.openWindow(urlToOpen));
+
+  const urlToOpen = event.notification?.data?.url || "/";
+
+  event.waitUntil(
+    clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {
+      for (const client of clientList) {
+        if (client.url === urlToOpen && "focus" in client) {
+          return client.focus();
+        }
+      }
+      if (clients.openWindow) {
+        return clients.openWindow(urlToOpen);
+      }
+    })
+  );
 });
 
-console.log("firebase-messaging-sw.js loaded and initialized with compat API.");
+console.log("✅ firebase-messaging-sw.js loaded and ready.");

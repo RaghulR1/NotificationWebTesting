@@ -75,7 +75,7 @@ document
 
       // ✅ Send to backend (optional)
       const response = await fetch(
-        "https://localhost:7165/api/notification/register-device",
+        "https://localhost:7189/api/notification/register-device",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

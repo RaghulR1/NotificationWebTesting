@@ -106,7 +106,19 @@ document
 // ✅ Foreground messages
 onMessage(messaging, (payload) => {
   console.log("✅ Foreground message:", payload);
-  alert(
-    `🔔 Notification:\n${payload.notification.title}\n${payload.notification.body}`
-  );
+
+  // Show system notification manually to match background style
+  if (Notification.permission === "granted") {
+    navigator.serviceWorker.getRegistration().then((registration) => {
+      registration?.showNotification(payload.notification.title, {
+        body: payload.notification.body,
+        icon: "/firebase-logo.png", // or your custom icon
+        data: {
+          url: payload.data?.url || "/"
+        },
+        tag: "fcm-notification", // consistent tag
+        renotify: true
+      });
+    });
+  }
 });

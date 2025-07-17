@@ -103,9 +103,9 @@ document
     }
   });
 
-// ✅ Foreground messages
 onMessage(messaging, (payload) => {
   console.log("✅ Foreground message:", payload);
-  const { title, body } = payload.notification;
-  alert(`🔔 ${title}\n${body}`);
+  const title = payload.data.title;
+  const body = payload.data.body;
+  alert(`🔔 ${title}\n${body}`); // Or custom toast/snackbar
 });

@@ -19,33 +19,24 @@ firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
+  console.log("[SW] Background message received:", payload);
+  
   const { title, body, url } = payload.data;
-  self.registration.showNotification(title, {
+  const notificationOptions = {
     body: body,
     icon: "/firebase-logo.png",
     data: { url },
-    tag: "fcm-notification",
+    tag: "fcm-update",
     renotify: false
-  });
+  };
+
+  self.registration.showNotification(title, notificationOptions);
 });
-// ✅ Handle click on notification
+
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
-
-  const urlToOpen = event.notification?.data?.url || "/";
-
-  event.waitUntil(
-    clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {
-      for (const client of clientList) {
-        if (client.url === urlToOpen && "focus" in client) {
-          return client.focus();
-        }
-      }
-      if (clients.openWindow) {
-        return clients.openWindow(urlToOpen);
-      }
-    })
-  );
+  const redirectUrl = event.notification.data?.url || "/";
+  event.waitUntil(clients.openWindow(redirectUrl));
 });
 
 console.log("✅ firebase-messaging-sw.js loaded and ready.");

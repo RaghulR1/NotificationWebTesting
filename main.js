@@ -106,6 +106,6 @@ document
 onMessage(messaging, (payload) => {
   const { title, body, url } = payload.data;
   console.log("Foreground message:", title, body);
-  // Update UI, e.g. show custom toast (not a system notification)
+  
 });
 

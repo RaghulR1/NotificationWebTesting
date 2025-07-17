@@ -18,25 +18,20 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
 
-// ✅ Background Message Handler
 messaging.onBackgroundMessage((payload) => {
-  console.log(
-    "[firebase-messaging-sw.js] Received background message:",
-    payload
-  );
+  console.log("[firebase-messaging-sw.js] Received background message:", payload);
 
-  const notificationTitle = payload.notification?.title || "New Message";
+  const notificationTitle = payload.data.title;
   const notificationOptions = {
-    body: payload.notification?.body || "",
-    icon: "/firebase-logo.png", // ✅ Customize if needed
+    body: payload.data.body,
+    icon: "/firebase-logo.png",
     data: {
-      url: payload.data?.url || "/", // ✅ redirect URL
+      url: payload.data.url || "/",
     },
-    tag: "fcm-notification", // ✅ Unified tag
-    renotify: false, // Avoid repeat noise
+    tag: "fcm-broadcast-message",
+    renotify: true,
   };
 
-  // ✅ Show notification only in background
   self.registration.showNotification(notificationTitle, notificationOptions);
 });
 

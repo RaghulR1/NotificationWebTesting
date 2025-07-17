@@ -75,7 +75,7 @@ document
 
       // ✅ Send to backend (optional)
       const response = await fetch(
-        "http://localhost:3000/api/notification/register-device",
+        "https://backendfornotification.onrender.com",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
